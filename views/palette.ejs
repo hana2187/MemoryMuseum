@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>思い出美術館 | パレット選択</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <!-- Hamburger Menu Button -->
+  <button class="hamburger-button" id="hamburgerBtn" aria-label="メニューを開く">
+    <span></span>
+    <span></span>
+    <span></span>
+  </button>
+
+  <!-- Menu Overlay -->
+  <div class="menu-overlay" id="menuOverlay">
+    <nav class="menu-nav">
+      <ul class="menu-list">
+        <li class="menu-item item-orange">
+          <a href="/home" class="menu-link">ホーム</a>
+          <div class="menu-decoration">
+            <div class="line"></div>
+            <span class="star">★</span>
+          </div>
+        </li>
+
+        <li class="menu-item item-blue">
+          <a href="/atelier/mode" class="menu-link">アトリエ</a>
+          <div class="menu-decoration">
+            <div class="line"></div>
+            <span class="star">★</span>
+          </div>
+        </li>
+
+        <li class="menu-item item-pink">
+          <a href="/gallery" class="menu-link">展示室</a>
+          <div class="menu-decoration">
+            <div class="line"></div>
+            <span class="star">★</span>
+          </div>
+        </li>
+
+        <li class="menu-item item-green">
+          <a href="#" class="menu-link" id="logoutLink">ログアウト</a>
+          <div class="menu-decoration">
+            <div class="line"></div>
+            <span class="star">★</span>
+          </div>
+        </li>
+      </ul>
+    </nav>
+  </div>
+
+  <div class="screen-container color-screen <%= mode %>" data-mode="<%= mode %>" data-auto-selected="<%= autoSelected %>">
+    <div class="header-text">今日使う5色を選ぶ</div>
+    <div class="image-upload-section">
+      <label for="image-upload" class="btn-secondary image-upload-btn">
+        📷 画像から色を抽出
+      </label>
+      <input type="file" id="image-upload" accept="image/*" multiple style="display: none;">
+    </div>
+    <div id="color-grid" class="color-grid"></div>
+    <div class="selected-colors-info" id="selected-colors-info"></div>
+    <form action="/atelier/draw" method="GET" class="palette-form">
+      <input type="hidden" name="shape" value="<%= shape %>">
+      <input type="hidden" name="colors" id="selected-colors-input" value="<%= JSON.stringify(selectedColors) %>">
+      <button type="submit" class="btn-primary">決定して描く</button>
+    </form>
+  </div>
+  <script>
+    window.__PALETTE_DATA__ = {
+      mode: "<%= mode %>",
+      autoSelected: <%= autoSelected ? "true" : "false" %>,
+      availableColors: <%- JSON.stringify(availableColors) %>,
+      selectedColors: <%- JSON.stringify(selectedColors) %>
+    };
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/node-vibrant@3.2.1-alpha.1/dist/vibrant.min.js"></script>
+  <script src="/js/palette.js" defer></script>
+  <script>
+    // Hamburger menu toggle
+    const hamburgerBtn = document.getElementById('hamburgerBtn');
+    const menuOverlay = document.getElementById('menuOverlay');
+    const logoutLink = document.getElementById('logoutLink');
+
+    hamburgerBtn.addEventListener('click', () => {
+      hamburgerBtn.classList.toggle('active');
+      menuOverlay.classList.toggle('active');
+    });
+
+    // Close menu when clicking outside
+    menuOverlay.addEventListener('click', (e) => {
+      if (e.target === menuOverlay) {
+        hamburgerBtn.classList.remove('active');
+        menuOverlay.classList.remove('active');
+      }
+    });
+
+    // Logout functionality
+    logoutLink.addEventListener('click', async (event) => {
+      event.preventDefault();
+      try {
+        const response = await fetch('/api/logout', { method: 'POST' });
+        if (response.ok || response.status === 401) {
+          window.location.href = '/login';
+          return;
+        }
+      } catch (err) {
+        console.error('Logout failed:', err);
+      }
+      alert('ログアウトに失敗しました');
+    });
+  </script>
+</body>
+</html>

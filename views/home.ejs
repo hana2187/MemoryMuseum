@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>思い出美術館 | ホーム</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <style>
+    .home-header {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+      max-width: 420px;
+      margin: 0 auto 24px;
+    }
+  </style>
+</head>
+<body>
+  <!-- Hamburger Menu Button -->
+  <button class="hamburger-button" id="hamburgerBtn" aria-label="メニューを開く">
+    <span></span>
+    <span></span>
+    <span></span>
+  </button>
+
+  <!-- Menu Overlay -->
+  <div class="menu-overlay" id="menuOverlay">
+    <nav class="menu-nav">
+      <ul class="menu-list">
+        <li class="menu-item item-orange">
+          <a href="/home" class="menu-link">ホーム</a>
+          <div class="menu-decoration">
+            <div class="line"></div>
+            <span class="star">★</span>
+          </div>
+        </li>
+
+        <li class="menu-item item-blue">
+          <a href="/atelier/mode" class="menu-link">アトリエ</a>
+          <div class="menu-decoration">
+            <div class="line"></div>
+            <span class="star">★</span>
+          </div>
+        </li>
+
+        <li class="menu-item item-pink">
+          <a href="/gallery" class="menu-link">展示室</a>
+          <div class="menu-decoration">
+            <div class="line"></div>
+            <span class="star">★</span>
+          </div>
+        </li>
+
+        <li class="menu-item item-green">
+          <a href="#" class="menu-link" id="logoutLink">ログアウト</a>
+          <div class="menu-decoration">
+            <div class="line"></div>
+            <span class="star">★</span>
+          </div>
+        </li>
+      </ul>
+    </nav>
+  </div>
+
+  <div class="screen-container home-screen">
+    <div class="home-header">
+      <div class="greeting">こんにちは、<%= username %>さん!</div>
+    </div>
+    <div class="sub-text">今日はどんな気分ですか?<br>ちょっとした一枚に描いてみましょう!</div>
+    <div class="status-chips">
+      <span class="chip">保存枚数: <%= artCount %> 枚</span>
+    </div>
+    <a href="/atelier/mode" class="menu-card">
+      <img src="/images/atelier-btn.png" alt="アトリエ">
+    </a>
+    <a href="/gallery" class="menu-card">
+      <img src="/images/gallery-btn.png" alt="展示室">
+    </a>
+
+  </div>
+  <script>
+    // Hamburger menu toggle
+    const hamburgerBtn = document.getElementById('hamburgerBtn');
+    const menuOverlay = document.getElementById('menuOverlay');
+    const logoutLink = document.getElementById('logoutLink');
+
+    hamburgerBtn.addEventListener('click', () => {
+      hamburgerBtn.classList.toggle('active');
+      menuOverlay.classList.toggle('active');
+    });
+
+    // Close menu when clicking outside
+    menuOverlay.addEventListener('click', (e) => {
+      if (e.target === menuOverlay) {
+        hamburgerBtn.classList.remove('active');
+        menuOverlay.classList.remove('active');
+      }
+    });
+
+    // Logout functionality
+    logoutLink.addEventListener('click', async (event) => {
+      event.preventDefault();
+      try {
+        const response = await fetch('/api/logout', { method: 'POST' });
+        if (response.ok || response.status === 401) {
+          window.location.href = '/login';
+          return;
+        }
+      } catch (err) {
+        console.error('Logout failed:', err);
+      }
+      alert('ログアウトに失敗しました');
+    });
+  </script>
+</body>
+</html>

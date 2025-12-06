@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>思い出美術館 | 展示室</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <!-- Hamburger Menu Button -->
+  <button class="hamburger-button" id="hamburgerBtn" aria-label="メニューを開く">
+    <span></span>
+    <span></span>
+    <span></span>
+  </button>
+
+  <!-- Menu Overlay -->
+  <div class="menu-overlay" id="menuOverlay">
+    <nav class="menu-nav">
+      <ul class="menu-list">
+        <li class="menu-item item-orange">
+          <a href="/home" class="menu-link">ホーム</a>
+          <div class="menu-decoration">
+            <div class="line"></div>
+            <span class="star">★</span>
+          </div>
+        </li>
+
+        <li class="menu-item item-blue">
+          <a href="/atelier/mode" class="menu-link">アトリエ</a>
+          <div class="menu-decoration">
+            <div class="line"></div>
+            <span class="star">★</span>
+          </div>
+        </li>
+
+        <li class="menu-item item-pink">
+          <a href="/gallery" class="menu-link">展示室</a>
+          <div class="menu-decoration">
+            <div class="line"></div>
+            <span class="star">★</span>
+          </div>
+        </li>
+
+        <li class="menu-item item-green">
+          <a href="#" class="menu-link" id="logoutLink">ログアウト</a>
+          <div class="menu-decoration">
+            <div class="line"></div>
+            <span class="star">★</span>
+          </div>
+        </li>
+      </ul>
+    </nav>
+  </div>
+
+  <div class="gallery-container">
+    <!-- 展示室A -->
+    <div class="screen-container gallery-screen" data-gallery-index="0">
+      <h2>展示室</h2>
+      <% if (!arts || arts.length === 0) { %>
+        <p class="empty-message">まだ作品がありません。アトリエで描いてみましょう。</p>
+      <% } else { %>
+        <div class="gallery-grid">
+          <% for (let i = 0; i < arts.length; i += 4) { %>
+            <div class="gallery-row">
+              <% arts.slice(i, i + 4).forEach(function(art) { %>
+                <div class="gallery-card <%= art.shape === 'circle' ? 'shape-circle' : 'shape-square' %>" data-artid="<%= art.artid %>" data-title="<%= art.title || '' %>" data-date="<%= new Date(art.timestamp).toLocaleDateString('ja-JP') %>">
+                  <img src="<%= art.path %>" alt="作品 <%= art.artid %>" loading="lazy">
+                  <div class="card-footer">
+                    <span><%= new Date(art.timestamp).toLocaleDateString("ja-JP") %></span>
+                  </div>
+                </div>
+              <% }); %>
+            </div>
+          <% } %>
+        </div>
+      <% } %>
+      <div class="gallery-actions">
+        <a href="/home" class="btn-primary" style="background:none; padding:0; overflow:hidden; border-radius:20px;">
+          <img src="/images/home-btn.jpg" alt="ホームへ戻る" style="width:100%; height:100%; display:block;">
+        </a>
+        <a href="/atelier/mode" class="btn-link">アトリエへ</a>
+      </div>
+    </div>
+
+    <!-- 展示室B: 色度図ギャラリー -->
+    <div class="screen-container gallery-screen" data-gallery-index="1">
+      <h2>展示室B</h2>
+      <div class="chromaticity-card">
+        <div class="controls">
+          
+          <div class="actions">
+            <button id="resetChromaticity" class="btn-secondary">リセット</button>
+            <button id="zoomOutChrom" class="btn-secondary">−</button>
+            <span id="zoomLevelChrom">100%</span>
+            <button id="zoomInChrom" class="btn-secondary">＋</button>
+          </div>
+        </div>
+
+        <div class="plot-wrapper">
+          <canvas id="chromaticityCanvas" width="620" height="620" role="img" aria-label="展示作品の平均色をプロットした色度図"></canvas>
+        </div>
+
+        <div id="chromaticityStatus" class="empty-message">作品を読み込み中...</div>
+        <!-- Hidden source gallery for chromaticity plotting (script reads these .gallery-card img elements) -->
+        <% if (arts && arts.length) { %>
+          <div class="gallery-grid chroma-source" style="display:none;">
+            <% for (let i = 0; i < arts.length; i += 4) { %>
+              <div class="gallery-row">
+                <% arts.slice(i, i + 4).forEach(function(art) { %>
+                  <div class="gallery-card <%= art.shape === 'circle' ? 'shape-circle' : 'shape-square' %>" data-artid="<%= art.artid %>" data-title="<%= art.title || '' %>" data-date="<%= new Date(art.timestamp).toLocaleDateString('ja-JP') %>">
+                    <img src="<%= art.path %>" alt="作品 <%= art.artid %>" loading="lazy">
+                    <div class="card-footer">
+                      <span><%= new Date(art.timestamp).toLocaleDateString("ja-JP") %></span>
+                    </div>
+                  </div>
+                <% }); %>
+              </div>
+            <% } %>
+          </div>
+        <% } %>
+      </div>
+
+      <div class="gallery-actions">
+        <a href="/home" class="btn-primary" style="background:none; padding:0; overflow:hidden; border-radius:20px;">
+          <img src="/images/home-btn.jpg" alt="ホームへ戻る" style="width:100%; height:100%; display:block;">
+        </a>
+        <a href="/atelier/mode" class="btn-link">アトリエへ</a>
+      </div>
+    </div>
+
+    <!-- 展示室C -->
+    <div class="screen-container gallery-screen" data-gallery-index="2">
+      <h2>展示室C</h2>
+      <p class="empty-message">準備中</p>
+      <div class="gallery-actions">
+        <a href="/home" class="btn-primary" style="background:none; padding:0; overflow:hidden; border-radius:20px;">
+          <img src="/images/home-btn.jpg" alt="ホームへ戻る" style="width:100%; height:100%; display:block;">
+        </a>
+        <a href="/atelier/mode" class="btn-link">アトリエへ</a>
+      </div>
+    </div>
+  </div>
+  </div>
+
+  <!-- Modal -->
+  <div id="art-modal" class="modal">
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <img id="modal-image" src="" alt="作品">
+      <div class="modal-info">
+        <h3 id="modal-title"></h3>
+        <p id="modal-date"></p>
+        <div class="modal-buttons">
+          <button id="share-art-btn" class="btn-primary">共有</button>
+          <button id="download-art-btn" class="btn-primary">ダウンロード</button>
+          <button id="similar-art-btn" class="btn-primary">似た絵</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="/js/gallery.js"></script>
+  <script src="/js/chromaticity-gallery.js"></script>
+  <script>
+    // Hamburger menu toggle
+    const hamburgerBtn = document.getElementById('hamburgerBtn');
+    const menuOverlay = document.getElementById('menuOverlay');
+    const logoutLink = document.getElementById('logoutLink');
+
+    hamburgerBtn.addEventListener('click', () => {
+      hamburgerBtn.classList.toggle('active');
+      menuOverlay.classList.toggle('active');
+    });
+
+    // Close menu when clicking outside
+    menuOverlay.addEventListener('click', (e) => {
+      if (e.target === menuOverlay) {
+        hamburgerBtn.classList.remove('active');
+        menuOverlay.classList.remove('active');
+      }
+    });
+
+    // Logout functionality
+    logoutLink.addEventListener('click', async (event) => {
+      event.preventDefault();
+      try {
+        const response = await fetch('/api/logout', { method: 'POST' });
+        if (response.ok || response.status === 401) {
+          window.location.href = '/login';
+          return;
+        }
+      } catch (err) {
+        console.error('Logout failed:', err);
+      }
+      alert('ログアウトに失敗しました');
+    });
+  </script>
+</body>
+</html>

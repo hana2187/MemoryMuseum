@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>思い出美術館 | ログイン</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <style>
+    .auth-screen {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      width: 375px;
+      height: 100dvh;
+      max-height: 100dvh;
+      padding: 20px;
+    
+      background-image: url('/images/auth-screen.png');
+      background-size: cover;
+      background-position: center center;
+      background-repeat: no-repeat;
+    }
+
+    .auth-container {
+      width: 100%;
+      max-width: 100%;
+      box-sizing: border-box;
+      
+      aspect-ratio: 353 / 683;
+      background-image: url('/images/auth-container.png');
+      background-size: 100% 100%;
+      background-repeat: no-repeat;
+      background-position: top center;
+    
+      padding: 40px;
+      border-radius: 20px;
+    }
+    .auth-title {
+      font-size: 28px;
+      font-weight: bold;
+      text-align: center;
+      color: #9c27b0;
+      font-family: "Zen Kaku Gothic New", "Hiragino Kaku Gothic ProN", "Meiryo", sans-serif;
+      letter-spacing: 0.1em;
+      display: inline-block;
+      margin: 0;
+      padding-bottom: 6px;
+      position: relative;
+      z-index: 1;
+    }
+    .auth-title-wrapper {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      width: fit-content;
+      margin: 0 auto 6px auto;
+    }
+    .auth-title-decoration {
+      position: relative;
+      width: 100%;
+      margin: 6px auto 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 0;
+    }
+    .auth-title-decoration .line {
+      flex: 1 1 auto;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, #ffcc00);
+      border-radius: 2px;
+      box-shadow: 0 0 8px #ffcc00;
+    }
+    .auth-title-decoration .star {
+      font-size: 14px;
+      margin-left: 5px;
+      color: #ffcc00;
+      text-shadow: 0 0 8px #ffcc00;
+      line-height: 1;
+    }
+    .auth-form {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .form-group label {
+      font-size: 14px;
+      font-weight: 600;
+      color: #555;
+    }
+    .form-group input {
+      padding: 12px 16px;
+      border: 2px solid #e0e0e0;
+      border-radius: 10px;
+      font-size: 16px;
+      transition: border-color 0.3s;
+    }
+    .form-group input:focus {
+      outline: none;
+      border-color: #577590;
+    }
+    .auth-button {
+      padding: 14px;
+      background: linear-gradient(90deg, #6a11cb, #2575fc); /* Mimics the gradient of auth-button.png */
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* Adds depth */
+      transition: background 0.3s, box-shadow 0.3s;
+    }
+
+    .auth-button:hover {
+      background: linear-gradient(90deg, #5a0fbf, #1f6ed4); /* Slightly darker gradient on hover */
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3); /* Enhanced shadow on hover */
+    }
+    .auth-switch {
+      text-align: center;
+      margin-top: 20px;
+      font-size: 14px;
+      color: #666;
+    }
+    .auth-switch a {
+      color: #577590;
+      text-decoration: none;
+      font-weight: 600;
+    }
+    .auth-switch a:hover {
+      text-decoration: underline;
+    }
+    .error-message {
+      color: #f94144;
+      font-size: 14px;
+      text-align: center;
+      margin-top: 10px;
+      display: none;
+    }
+    .success-message {
+      color: #43aa8b;
+      font-size: 14px;
+      text-align: center;
+      margin-top: 10px;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="auth-screen">
+    <div class="auth-container">
+    <div class="auth-title-wrapper">
+      <h1 class="auth-title">ログイン</h1>
+      <div class="auth-title-decoration">
+      <div class="line"></div>
+      <div class="star">★</div>
+      </div>
+    </div>
+      <form class="auth-form" id="loginForm">
+        <div class="form-group">
+          <label for="username">ユーザー名</label>
+          <input type="text" id="username" name="username" required autocomplete="username">
+        </div>
+        <div class="form-group">
+          <label for="password">パスワード</label>
+          <input type="password" id="password" name="password" required autocomplete="current-password">
+        </div>
+        <button type="submit" class="auth-button">ログイン</button>
+        <div class="error-message" id="errorMessage"></div>
+        <div class="success-message" id="successMessage"></div>
+      </form>
+      <div class="auth-switch">
+        アカウントをお持ちでない方は <br><a href="/register">新規登録</a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const form = document.getElementById('loginForm');
+    const errorMessage = document.getElementById('errorMessage');
+    const successMessage = document.getElementById('successMessage');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      errorMessage.style.display = 'none';
+      successMessage.style.display = 'none';
+
+      const username = document.getElementById('username').value;
+      const password = document.getElementById('password').value;
+
+      try {
+        const response = await fetch('/api/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username, password })
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          successMessage.textContent = 'ログインしました';
+          successMessage.style.display = 'block';
+          setTimeout(() => {
+            window.location.href = '/home';
+          }, 500);
+        } else {
+          errorMessage.textContent = data.error === 'invalid credentials' 
+            ? 'ユーザー名またはパスワードが正しくありません' 
+            : data.error || 'ログインに失敗しました';
+          errorMessage.style.display = 'block';
+        }
+      } catch (error) {
+        errorMessage.textContent = 'ログインに失敗しました';
+        errorMessage.style.display = 'block';
+      }
+    });
+  </script>
+  <script src="/js/preload.js"></script>
+</body>
+</html>
